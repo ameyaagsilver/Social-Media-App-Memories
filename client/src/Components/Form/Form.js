@@ -8,12 +8,12 @@ import { createPost, updatePost } from '../../actions/posts';
 
 
 const Form = ({ currentId, setCurrentId }) => {
+	const classes = useStyles();
 	const [postData, setPostData] = useState({
 		creator: '', title: '', message: '', tags: '', selectedFile: ''
 	});
 	const post = useSelector((state) => currentId ? state.posts.find((p) => p._id === currentId) : null);
 	const dispatch = useDispatch();
-	const classes = useStyles();
 
 	useEffect(() => {
 		if (post) setPostData(post);
