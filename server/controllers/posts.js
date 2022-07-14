@@ -31,16 +31,30 @@ export const createPost = async (req, res) => {
 }
 
 export const updatePost = async (req, res) => {
-    const { id:_id } = req.params;
+    const { id } = req.params;
     const post = req.body;
 
-    if(!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('No post with that id = ', id);
+    if(!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('No post with that id');
     try {
-        const updatedPost = await PostMessage.findByIdAndUpdate(_id, post, {new: true});
+        const updatedPost = await PostMessage.findByIdAndUpdate(id, post, {new: true});
         res.json(updatedPost);
     } catch (error) {
-        console.log(error.message);
+        console.log(error);
         res.json(error);
     }
+}
 
+export const deletePost = async (req, res) => {
+    const { id } = req.params;
+
+    if(!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('No post with that id');
+    try {
+        const post = await PostMessage.findByIdAndRemove(id);
+        console.log("Deleting the post...");
+        console.log(post);
+        res.json({message: 'Post deleted successfully...'});
+    } catch (error) {
+        console.log(error);
+        res.json(error);
+    }
 }

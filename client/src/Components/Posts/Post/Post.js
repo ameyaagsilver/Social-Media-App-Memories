@@ -6,7 +6,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import moment from 'moment';
 
-const Post = ({ post }) => {
+const Post = ({ post, setCurrentId }) => {
 	const classes = useStyles();
 
 	return (
@@ -19,7 +19,7 @@ const Post = ({ post }) => {
 				</div>
 
 				<div className={classes.overlay2}>
-					<Button style={{ color: 'white' }} size="small" onClick={() => { }}>
+					<Button style={{ color: 'white' }} size="small" onClick={() => setCurrentId(post._id)}>
 						<MoreHorizIcon fontSize='default' />
 					</Button>
 				</div>
