@@ -5,13 +5,13 @@ import PostMessage from '../models/posts.js'
 export const getPosts = async (req, res) => {
     console.log("getting all the posts for you...");
 
-    try{
+    try {
         const allPosts = await PostMessage.find();
 
         res.status(200).json(allPosts);
-    } catch(error) {
+    } catch (error) {
         console.log(error);
-        res.status(404).json({message: error.message});
+        res.status(404).json({ message: error.message });
     }
 }
 
@@ -20,13 +20,13 @@ export const createPost = async (req, res) => {
     const post = req.body;
     const newPost = PostMessage(post);
 
-    try{
+    try {
         await newPost.save();
 
         res.status(200).json(newPost);
-    } catch(error) {
+    } catch (error) {
         console.log(error);
-        res.status(404).json({message: error.message});
+        res.status(404).json({ message: error.message });
     }
 }
 
@@ -34,9 +34,9 @@ export const updatePost = async (req, res) => {
     const { id } = req.params;
     const post = req.body;
 
-    if(!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('No post with that id');
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('No post with that id');
     try {
-        const updatedPost = await PostMessage.findByIdAndUpdate(id, post, {new: true});
+        const updatedPost = await PostMessage.findByIdAndUpdate(id, post, { new: true });
         res.json(updatedPost);
     } catch (error) {
         console.log(error);
@@ -47,12 +47,26 @@ export const updatePost = async (req, res) => {
 export const deletePost = async (req, res) => {
     const { id } = req.params;
 
-    if(!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('No post with that id');
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('No post with that id');
     try {
         const post = await PostMessage.findByIdAndRemove(id);
         console.log("Deleting the post...");
         console.log(post);
-        res.json({message: 'Post deleted successfully...'});
+        res.json({ message: 'Post deleted successfully...' });
+    } catch (error) {
+        console.log(error);
+        res.json(error);
+    }
+}
+
+export const likePost = async (req, res) => {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('Cannot like a post which does not exist');
+    try {
+        const oldPost = await PostMessage.findById(id);
+        const updatedPost = await PostMessage.findByIdAndUpdate(id, { likeCount: oldPost.likeCount + 1 }, { new: true });
+        res.json(updatedPost);
     } catch (error) {
         console.log(error);
         res.json(error);
