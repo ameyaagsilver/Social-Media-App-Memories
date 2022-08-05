@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { AppBar, Avatar, Button, Toolbar, Typography } from '@material-ui/core';
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import decode from 'jwt-decode'
 
 import useStyles from './styles';
 import memoriesImage from '../../images/memories.png'
@@ -15,6 +16,13 @@ export const Navbar = () => {
     const location = useLocation();
 
     useEffect(() => {
+        const token = user?.token;
+        if(token) {
+            const decodedToken = decode(token);
+            if(decodedToken.exp * 1000 < new Date().getTime()) {
+                handleLogout();
+            }
+        }
         setUser(JSON.parse(localStorage.getItem('profile')));
     }, [location]);
 
@@ -33,8 +41,8 @@ export const Navbar = () => {
             <Toolbar className={classes.toolbar}>
                 {user ? (
                     <div className={classes.profile}>
-                        <Avatar className={classes.purple} alt={user.profileObj.name} src={user.profileObj.picture}>{user.profileObj.name.charAt(0)}</Avatar>
-                        <Typography className={classes.userName} variant="h6">{user.profileObj.name}</Typography>
+                        <Avatar className={classes.purple} alt={user.result.name} src={user.result.picture}>{user.result.name.charAt(0)}</Avatar>
+                        <Typography className={classes.userName} variant="h6">{user.result.name}</Typography>
                         <Button variant="contained" className={classes.logout} color="secondary" onClick={handleLogout}>Logout</Button>
                     </div>
                 ) :

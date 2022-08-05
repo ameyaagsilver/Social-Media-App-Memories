@@ -14,14 +14,14 @@ export const Input = ({ half, name, label, autoFocus, handleChange, handleShowPa
                 autoFocus={autoFocus}
                 label={label}
                 fullWidth
+                type={type}
                 InputProps={name==='password' ? {
-                    endadorment: (
+                    endAdornment: (
                         <InputAdornment position="end">
                             <IconButton onClick={handleShowPassword}>
                                 {type==='password' ? <Visibility/> : <VisibilityOff/>}
                             </IconButton>
                         </InputAdornment>
-
                     )
                 } : null}
             >

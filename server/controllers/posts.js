@@ -18,7 +18,8 @@ export const getPosts = async (req, res) => {
 export const createPost = async (req, res) => {
     console.log("Creating a post for you...");
     const post = req.body;
-    const newPost = PostMessage(post);
+    if(!req?.userId) res.status(400).json({message: "U r not logged in..."})
+    const newPost = PostMessage({ ...post, creator: req?.userId });
 
     try {
         await newPost.save();
@@ -62,10 +63,21 @@ export const deletePost = async (req, res) => {
 export const likePost = async (req, res) => {
     const { id } = req.params;
 
+    if (!req.userId) res.json({ message: "User is not authenticated..." });
+
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('Cannot like a post which does not exist');
     try {
         const oldPost = await PostMessage.findById(id);
-        const updatedPost = await PostMessage.findByIdAndUpdate(id, { likeCount: oldPost.likeCount + 1 }, { new: true });
+
+        const index = oldPost.likes.findIndex((id) => id === String(req.userId));
+
+        if (index == -1) {
+            oldPost.likes.push(req.userId);
+        } else {
+            oldPost.likes = oldPost.likes.filter((userid) => userid !== String(req.userId));
+        }
+
+        const updatedPost = await PostMessage.findByIdAndUpdate(id, oldPost, { new: true });
         res.json(updatedPost);
     } catch (error) {
         console.log(error);

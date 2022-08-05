@@ -6,22 +6,30 @@ import jwt_decode from 'jwt-decode';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
+import {signin, signup} from '../../actions/auth'
 import useStyles from './styles';
 import { Input } from './Input';
 
 export const Auth = () => {
 	const classes = useStyles();
+	const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', password: '', confirmPassword: '' });
 	const [isSignup, setIsSignup] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
-	const handleSubmit = () => {
-		console.log("Submitted...")
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		console.log(formData);
+		if(isSignup) {
+			dispatch(signup(formData, navigate));
+		} else {
+			dispatch(signin(formData, navigate));
+		}
 	}
 
-	const handleChange = () => {
-		console.log("Submitted...");
+	const handleChange = (e) => {
+		setFormData({ ...formData, [e.target.name]: e.target.value });
 	}
 
 	const handleShowPassword = () => {
@@ -35,11 +43,11 @@ export const Auth = () => {
 
 	const googleSuccess = async (res) => {
 		console.log(res);
-		const profileObj = jwt_decode(res?.credential);
-		console.log(profileObj);
+		const result = jwt_decode(res?.credential);
+		console.log(result);
 
 		try {
-			dispatch({ type: 'AUTH', data: { profileObj } });
+			dispatch({ type: 'AUTH', data: { result, token: res?.credential } });
 			navigate('/')
 		} catch (error) {
 			console.log(error);
