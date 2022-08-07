@@ -4,11 +4,30 @@ import PostMessage from '../models/posts.js'
 
 export const getPosts = async (req, res) => {
     console.log("getting all the posts for you...");
+    const { page } = req.query;
+    try {
+
+        const LIMIT = 2;
+        const startIndex = (Number(page) - 1) * LIMIT;
+        const totalPosts = await PostMessage.countDocuments({});
+        const posts = await PostMessage.find().sort({ _id: - 1 }).limit(LIMIT).skip(startIndex);
+
+        res.status(200).json({ data: posts, currentPage: Number(page), numberOfPages: Math.ceil(totalPosts / LIMIT) });
+    } catch (error) {
+        console.log(error);
+        res.status(404).json({ message: error.message });
+    }
+}
+
+export const getPostsBySearch = async (req, res) => {
+    console.log("getting all the searched posts for you...");
+    const { searchQuery, tags } = req.query;
 
     try {
-        const allPosts = await PostMessage.find();
+        const title = new RegExp(searchQuery, 'i');
+        const posts = await PostMessage.find({ $or: [{ title }, { tags: { $in: tags.split(",") } }] });
 
-        res.status(200).json(allPosts);
+        res.status(200).json(posts);
     } catch (error) {
         console.log(error);
         res.status(404).json({ message: error.message });
@@ -18,7 +37,7 @@ export const getPosts = async (req, res) => {
 export const createPost = async (req, res) => {
     console.log("Creating a post for you...");
     const post = req.body;
-    if(!req?.userId) res.status(400).json({message: "U r not logged in..."})
+    if (!req?.userId) res.status(400).json({ message: "U r not logged in..." })
     const newPost = PostMessage({ ...post, creator: req?.userId });
 
     try {

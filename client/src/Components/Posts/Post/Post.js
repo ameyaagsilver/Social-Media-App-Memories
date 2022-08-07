@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux';
 import { Card, CardActions, CardContent, CardMedia, Button, Typography, Grow } from '@material-ui/core';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
@@ -6,20 +6,25 @@ import ThumbUpAltOutlined from '@material-ui/icons/ThumbUpAltOutlined';
 import DeleteIcon from '@material-ui/icons/Delete';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import moment from 'moment';
+import { useLocation } from 'react-router-dom';
+
+
 
 import useStyles from './styles';
 import { deletePost, likePost } from '../../../actions/posts';
 
 const Post = ({ post, setCurrentId }) => {
 	const classes = useStyles();
-	const user = JSON.parse(localStorage.getItem('profile'));
+	let user = JSON.parse(localStorage.getItem('profile'));
 	const dispatch = useDispatch();
+	const location = useLocation();
 	const handleDelete = (id) => {
 		dispatch(deletePost(id));
 	}
 	const handleLike = (id) => {
 		dispatch(likePost(id));
 	}
+	
 	const Likes = () => {
 		if (post.likes.length > 0) {
 			return post.likes.find((like) => like === (user?.result?._id || user?.result?.sub))
@@ -36,7 +41,7 @@ const Post = ({ post, setCurrentId }) => {
 
 	return (
 		<Grow in>
-			<Card className={classes.card}>
+			<Card className={classes.card} raised elevation={6}>
 				<CardMedia className={classes.media} image={post.selectedFile} title={post.title} />
 				<div className={classes.overlay} >
 					<Typography variant='h6'>{post.name}</Typography>
