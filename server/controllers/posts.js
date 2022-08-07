@@ -19,6 +19,20 @@ export const getPosts = async (req, res) => {
     }
 }
 
+export const getPostById = async (req, res) => {
+    const { id } = req.params;
+    console.log(id);
+    try {
+        if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('No post with that id');
+
+        const post = await PostMessage.findById(id);
+
+        res.status(200).json(post);
+    } catch (error) {
+        console.log(error);
+        res.status(404).json({ message: error.message });
+    }
+}
 export const getPostsBySearch = async (req, res) => {
     console.log("getting all the searched posts for you...");
     const { searchQuery, tags } = req.query;
