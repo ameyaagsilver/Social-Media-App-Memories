@@ -1,15 +1,16 @@
 import React, { useEffect } from 'react';
-import { Paper, Typography, CircularProgress, Divider } from '@material-ui/core/';
+import { Paper, Typography, CircularProgress, Divider, Card, Grid } from '@material-ui/core/';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 
 import useStyles from './styles';
-import { getPostById } from '../../actions/posts';
+import { getPostById, getRecommendedPostsByPost } from '../../actions/posts';
+import Post from '../Posts/Post/Post';
 
 
 export const PostDetails = () => {
-    const { post, posts, isLoading } = useSelector((state) => state.posts);
+    let { post, recommendedPosts, isLoading } = useSelector((state) => state.posts);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const classes = useStyles();
@@ -19,6 +20,14 @@ export const PostDetails = () => {
         console.log(id);
         if (id) dispatch(getPostById(id));
     }, [id]);
+
+    useEffect(() => {
+        console.log("Post recom", post)
+        if (post) dispatch(getRecommendedPostsByPost(post));
+    }, [post]);
+    recommendedPosts = recommendedPosts.filter((p) => p._id !== post?._id);
+
+    const openPost = (_id) => navigate(`/posts/${_id}`);
 
     if (isLoading) {
         return (
@@ -63,6 +72,20 @@ export const PostDetails = () => {
                     <img className={classes.media} src={post.selectedFile || 'https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png'} alt={post.title} />
                 </div>
             </div>
+            {recommendedPosts?.length!==0 ?  (
+                <div className={classes.section}>
+                <Typography gutterBottom variant="h5">You might also like:</Typography>
+                <div className={classes.recommendedPosts}>
+                    <Grid className={classes.container} container alignItems="stretch" spacing={3}>
+                        {recommendedPosts.map((post) => (
+                            <Grid key={post._id} item xs={12} sm={12} md={6} lg={3}>
+                                <Post post={post} />
+                            </Grid>
+                        ))}
+                    </Grid>
+                </div>
+            </div>
+            ) : null}
 
         </Paper>
     )

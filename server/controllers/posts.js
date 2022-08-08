@@ -23,7 +23,7 @@ export const getPostById = async (req, res) => {
     const { id } = req.params;
     console.log(id);
     try {
-        if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('No post with that id');
+        if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('No post with that idd');
 
         const post = await PostMessage.findById(id);
 
@@ -34,7 +34,7 @@ export const getPostById = async (req, res) => {
     }
 }
 export const getPostsBySearch = async (req, res) => {
-    console.log("getting all the searched posts for you...");
+    console.log("getting all the searched posts for you....");
     const { searchQuery, tags } = req.query;
 
     try {

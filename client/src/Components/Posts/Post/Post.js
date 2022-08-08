@@ -74,7 +74,7 @@ const Post = ({ post, setCurrentId }) => {
 						<Likes />
 					</Button>
 					{(user?.result?._id === post?.creator || user?.result?.sub === post?.creator) ?
-						<Button size="small" color="primary" onClick={() => { handleDelete(post._id) }}><DeleteIcon fontSize="small" /> Delete</Button>
+						<Button size="small" color="secondary" onClick={() => { handleDelete(post._id) }}><DeleteIcon fontSize="small" /> Delete</Button>
 						: null}
 
 				</CardActions>

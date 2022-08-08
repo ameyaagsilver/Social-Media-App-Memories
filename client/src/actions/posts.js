@@ -1,5 +1,5 @@
 import * as api from '../api';
-import { FETCH_ALL, FETCH_POST_BY_ID, FETCH_ALL_BY_SEARCH, DELETE, CREATE, UPDATE, LIKE, START_LOADING, END_LOADING } from '../constants/actionTypes';
+import { FETCH_ALL, FETCH_RECOMMENDED_POSTS, FETCH_POST_BY_ID, FETCH_ALL_BY_SEARCH, DELETE, CREATE, UPDATE, LIKE, START_LOADING, END_LOADING } from '../constants/actionTypes';
 
 export const getPosts = (page) => async (dispatch) => {
     try {
@@ -33,6 +33,20 @@ export const getPostsBySearch = (searchQuery) => async (dispatch) => {
         dispatch({ type: START_LOADING });
         const { data } = await api.fetchPostsBySearch(searchQuery);
         const action = { type: FETCH_ALL_BY_SEARCH, payload: data };
+        dispatch(action);
+        dispatch({ type: END_LOADING });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const getRecommendedPostsByPost = (post) => async (dispatch) => {
+    try {
+        const searchQuery = {searchQuery: 'none', tags: post?.tags.join(',')};
+        dispatch({ type: START_LOADING });
+        const { data } = await api.fetchPostsBySearch(searchQuery);
+        console.log(data);
+        const action = { type: FETCH_RECOMMENDED_POSTS, payload: data };
         dispatch(action);
         dispatch({ type: END_LOADING });
     } catch (error) {
