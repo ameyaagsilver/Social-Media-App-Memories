@@ -7,10 +7,11 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import useStyles from './styles';
 import { getPostById, getRecommendedPostsByPost } from '../../actions/posts';
 import Post from '../Posts/Post/Post';
+import { Comments } from './Comments/Comments';
 
 
 export const PostDetails = () => {
-    let { post, recommendedPosts, isLoading } = useSelector((state) => state.posts);
+    let { post, recommendedPosts, isLoading, isRecommendedPostsLoading } = useSelector((state) => state.posts);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const classes = useStyles();
@@ -67,26 +68,45 @@ export const PostDetails = () => {
                         </Link>
                     </Typography>
                     <Typography variant="body1">{moment(post.createdAt).fromNow()}</Typography>
+                    <Divider style={{ margin: '20px 0' }} />
+                    <Comments post={post} />
                 </div>
                 <div className={classes.imageSection}>
                     <img className={classes.media} src={post.selectedFile || 'https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png'} alt={post.title} />
                 </div>
             </div>
-            {recommendedPosts?.length!==0 ?  (
-                <div className={classes.section}>
-                <Typography gutterBottom variant="h5">You might also like:</Typography>
-                <div className={classes.recommendedPosts}>
-                    <Grid className={classes.container} container alignItems="stretch" spacing={3}>
-                        {recommendedPosts.map((post) => (
-                            <Grid key={post._id} item xs={12} sm={12} md={6} lg={3}>
-                                <Post post={post} />
-                            </Grid>
-                        ))}
-                    </Grid>
-                </div>
-            </div>
-            ) : null}
 
+            {isRecommendedPostsLoading ?
+                (<Paper elevation={6} className={classes.loadingPaper}>
+                    <CircularProgress size="5em" />
+                </Paper>) :
+                (recommendedPosts?.length !== 0 ? (
+                    <div className={classes.section}>
+                        <Typography gutterBottom variant="h5">You might also like:</Typography>
+                        <div className={classes.recommendedPosts}>
+                            <Grid className={classes.container} container alignItems="stretch" spacing={3}>
+                                {recommendedPosts.map((post) => (
+                                    <Grid key={post._id} item xs={12} sm={12} md={6} lg={3}>
+                                        <Post post={post} />
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </div>
+                    </div>
+                ) :
+                    <div className={classes.section}>
+                        <Typography gutterBottom variant="h5">You might also like:</Typography>
+                        <div className={classes.recommendedPosts}>
+                            <Grid className={classes.container} container alignItems="stretch" spacing={3}>
+                                <Typography variant='h6' align='center'>
+                                    Can't find any recommendations for this post.
+                                </Typography>
+                            </Grid>
+                        </div>
+                    </div>
+
+                )
+            }
         </Paper>
     )
 }

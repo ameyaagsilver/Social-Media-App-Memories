@@ -117,3 +117,20 @@ export const likePost = async (req, res) => {
         res.json(error);
     }
 }
+
+export const commentOnPost = async (req, res) => {
+    const { comment } = req.body;
+    const { id } = req.params;
+
+    if (!req?.userId) res.status(400).json({ message: "U r not logged in..." })
+
+    try {
+        const post = await PostMessage.findById(id);
+        post.comments.push(comment);
+        const updatedPost = await PostMessage.findByIdAndUpdate(id, post, { new: true });
+        res.status(200).json(updatedPost);
+    } catch (error) {
+        console.log(error);
+        res.status(404).json({ message: error.message });
+    }
+}

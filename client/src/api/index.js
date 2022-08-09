@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 const url = 'http://localhost:5000';
-const API = axios.create({baseURL: url});
+const API = axios.create({ baseURL: url });
 API.interceptors.request.use((req) => {
-    if(localStorage.getItem('profile')) {
+    if (localStorage.getItem('profile')) {
         req.headers.Authorization = `Bearer ${JSON.parse(localStorage.getItem('profile')).token}`
     }
     return req;
@@ -22,6 +22,8 @@ export const updatePost = (id, updatedPost) => API.patch(`/posts/${id}`, updated
 export const deletePost = (id) => API.delete(`/posts/${id}`);
 
 export const likePost = (id) => API.patch(`/posts/like/${id}`);
+
+export const commentOnPost = (comment, id) => API.post(`/posts/commentOnPost/${id}`, { comment });
 
 
 export const signIn = (formData) => API.post('/user/signin', formData);

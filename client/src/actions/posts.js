@@ -1,5 +1,5 @@
 import * as api from '../api';
-import { FETCH_ALL, FETCH_RECOMMENDED_POSTS, FETCH_POST_BY_ID, FETCH_ALL_BY_SEARCH, DELETE, CREATE, UPDATE, LIKE, START_LOADING, END_LOADING } from '../constants/actionTypes';
+import { FETCH_ALL, FETCH_RECOMMENDED_POSTS, FETCH_POST_BY_ID, FETCH_ALL_BY_SEARCH, DELETE, CREATE, UPDATE, LIKE, COMMENT_ON_POST, START_LOADING, END_LOADING, START_LOADING_RECOMMENDED_POSTS, END_LOADING_RECOMMENDED_POSTS } from '../constants/actionTypes';
 
 export const getPosts = (page) => async (dispatch) => {
     try {
@@ -42,13 +42,13 @@ export const getPostsBySearch = (searchQuery) => async (dispatch) => {
 
 export const getRecommendedPostsByPost = (post) => async (dispatch) => {
     try {
-        const searchQuery = {searchQuery: 'none', tags: post?.tags.join(',')};
-        dispatch({ type: START_LOADING });
+        dispatch({ type: START_LOADING_RECOMMENDED_POSTS });
+        const searchQuery = { searchQuery: 'none', tags: post?.tags.join(',') };
         const { data } = await api.fetchPostsBySearch(searchQuery);
         console.log(data);
         const action = { type: FETCH_RECOMMENDED_POSTS, payload: data };
         dispatch(action);
-        dispatch({ type: END_LOADING });
+        dispatch({ type: END_LOADING_RECOMMENDED_POSTS })
     } catch (error) {
         console.log(error);
     }
@@ -93,5 +93,19 @@ export const likePost = (id) => async (dispatch) => {
         dispatch(action);
     } catch (error) {
         console.log(error.message);
+    }
+}
+
+export const commentOnPost = (comment, id) => async (dispatch) => {
+    try {
+        const { data } = await api.commentOnPost(comment, id);
+        console.log("Commented on a post")
+        console.log(data);
+        const action = { type: COMMENT_ON_POST, payload: data };
+        dispatch(action);
+        
+        return data.comments;
+    } catch (error) {
+        console.log(error);
     }
 }
