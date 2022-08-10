@@ -5,6 +5,7 @@ import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import jwt_decode from 'jwt-decode';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'wc-toast';
 
 import {signin, signup} from '../../actions/auth'
 import useStyles from './styles';
@@ -22,9 +23,9 @@ export const Auth = () => {
 		e.preventDefault();
 		console.log(formData);
 		if(isSignup) {
-			dispatch(signup(formData, navigate));
+			dispatch(signup(formData, navigate, toast));
 		} else {
-			dispatch(signin(formData, navigate));
+			dispatch(signin(formData, navigate, toast));
 		}
 	}
 
@@ -56,11 +57,12 @@ export const Auth = () => {
 
 	const googleFailure = (error) => {
 		console.log(error);
-		console.log("Unsuccssful...try again later")
+		toast.error("Google authentication failed try later!!!")
 	}
 
 	return (
 		<Container component="main" maxWidth="xs">
+			<wc-toast></wc-toast>
 			<Paper className={classes.paper} elevation={3}>
 				<Avatar className={classes.avatar}>
 					<LockOutlinedIcon />

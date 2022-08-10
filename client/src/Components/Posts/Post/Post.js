@@ -5,6 +5,7 @@ import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import ThumbUpAltOutlined from '@material-ui/icons/ThumbUpAltOutlined';
 import DeleteIcon from '@material-ui/icons/Delete';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
+import CommentIcon from '@material-ui/icons/Comment'
 import moment from 'moment';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -55,13 +56,13 @@ const Post = ({ post, setCurrentId }) => {
 						<Typography variant='body2'>{moment(post.createdAt).fromNow()}</Typography>
 					</div>
 				</ButtonBase>
-					<div className={classes.overlay2}>
-						{(user?.result?._id === post?.creator || user?.result?.sub === post?.creator) ?
-							<Button style={{ color: 'white' }} size="small" onClick={() => setCurrentId(post._id)}>
-								<MoreHorizIcon fontSize='medium' />
-							</Button>
-							: null}
-					</div>
+				<div className={classes.overlay2}>
+					{(user?.result?._id === post?.creator || user?.result?.sub === post?.creator) ?
+						<Button style={{ color: 'white' }} size="small" onClick={() => setCurrentId(post._id)}>
+							<MoreHorizIcon fontSize='medium' />
+						</Button>
+						: null}
+				</div>
 				<div className={classes.details}>
 					<Typography variant="body2" color="textSecondary" component="h2">{post.tags.map((tag) => `#${tag} `)}</Typography>
 				</div>
@@ -73,8 +74,11 @@ const Post = ({ post, setCurrentId }) => {
 					<Button size="small" color="primary" disabled={!user?.result} onClick={() => { handleLike(post._id) }}>
 						<Likes />
 					</Button>
+					<Button style={{borderRadius:100, color: 'gray'}} onClick={handleOpenPost}>
+						<CommentIcon style={{ marginRight: '.2rem' }}/>{post?.comments?.length}
+					</Button>
 					{(user?.result?._id === post?.creator || user?.result?.sub === post?.creator) ?
-						<Button size="small" color="secondary" onClick={() => { handleDelete(post._id) }}><DeleteIcon fontSize="small" /> Delete</Button>
+						<Button size="small" color="secondary" onClick={() => { handleDelete(post._id) }}><DeleteIcon fontSize="small" />Delete</Button>
 						: null}
 
 				</CardActions>
