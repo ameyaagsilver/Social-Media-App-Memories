@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const url = 'https://mernapisamg.herokuapp.com/';
-// const url = 'http://localhost:5000';
+// const url = 'https://mernapisamg.herokuapp.com/';
+const url = 'http://localhost:5000';
 const API = axios.create({ baseURL: url });
 API.interceptors.request.use((req) => {
     if (localStorage.getItem('profile')) {

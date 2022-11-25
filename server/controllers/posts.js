@@ -51,6 +51,7 @@ export const getPostsBySearch = async (req, res) => {
 export const createPost = async (req, res) => {
     console.log("Creating a post for you...");
     const post = req.body;
+    console.log(post);
     if (!req?.userId) res.status(400).json({ message: "U r not logged in..." })
     const newPost = PostMessage({ ...post, creator: req?.userId });
 
